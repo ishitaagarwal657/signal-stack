@@ -63,3 +63,9 @@ Free hosting may sleep or reset SQLite; scheduled jobs only run while the app is
 ## Known limitations
 - Reddit/LinkedIn are not crawled (terms and auth); customer voice comes from HN, news/blog discussion feeds and any customer pages the AI proposes that pass robots checks.
 - Email delivery is "email-ready HTML download" (no SMTP configured).
+## Live demo (bonus)
+https://signal-stack-b5yp.onrender.com
+- Render free plan par hai: pehli request 50 second tak le sakti hai, aur service idle mein sleep hoti hai.
+- Free plan par persistent disk nahi hai, isliye live app mein naya data restart par reset ho jata hai.
+- Scheduler sleep ke dauran nahi chalta.
+- Asli demo, screenshots aur sample briefs local run se bane hain (video aur samples/reports).
