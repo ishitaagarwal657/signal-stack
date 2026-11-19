@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block body %}
+<div class="card"><h1>Company setup</h1>
+<p class="mut">Enter a company name and website. The system researches the public website, then interviews the founder, then builds a tailored Signal Stack.</p>
+<form method="post" action="/company/new" onsubmit="this.querySelector('button').disabled=true;this.querySelector('button').textContent='Researching... (up to a minute)'">
+<div class="grid"><div><label>Company name</label><input name="name" placeholder="MeetUniversity" required></div>
+<div><label>Website</label><input name="url" placeholder="https://www.meetuniversity.com" required></div></div>
+<p><button>Research company &amp; start</button></p></form></div>
+<div class="card"><h2>Configured companies</h2>
+{% for r in rows %}<p><a href="/c/{{r.id}}"><b>{{r.name}}</b></a> <span class="mut">{{r.url}}</span></p>{% else %}<p class="mut">None yet.</p>{% endfor %}</div>
+{% endblock %}

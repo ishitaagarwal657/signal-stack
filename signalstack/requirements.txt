@@ -1,0 +1,10 @@
+flask>=3.0
+requests
+beautifulsoup4
+feedparser
+apscheduler>=3.10
+pandas
+openpyxl
+pypdf
+tzdata
+gunicorn

@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% block body %}
+<h1>Signal Stack <span class="mut">{{c.name}}</span></h1>
+<div class="card row"><form method="post" action="/c/{{c.id}}/discover" onsubmit="this.querySelector('button').textContent='Discovering sources... (1-2 min)';"><button>Discover sources with AI</button></form>
+<a class="btn sec" href="/c/{{c.id}}/sources">Source Manager</a>
+<span class="mut">Competitors, customer-voice queries and market/regulatory sources are generated from this company's profile, then URLs are verified. Each source carries its reason.</span></div>
+{% set titles={'customers':'A. Customers','competitors':'B. Competitors','market':'C. Market','internal':'D. Internal'} %}
+{% for cat,items in groups.items() %}
+<div class="card"><h2>{{titles[cat]}} <span class="tag">{{items|length}} sources</span></h2>
+{% if cat=='competitors' %}{% set names=items|map(attribute='competitor')|select|unique|list %}<p class="mut">{{names|length}} competitors/substitutes: <b>{{names|join(', ')}}</b></p>{% endif %}
+<table><tr><th>Source</th><th>Type</th><th>Why we monitor it</th><th>Status</th></tr>
+{% for s in items %}<tr><td>{{s.name}}</td><td>{{s.kind}}</td><td>{{s.reason}}</td>
+<td><span class="tag {{'ok' if s.status=='approved' else 'warn'}}">{{s.status}}</span></td></tr>
+{% else %}<tr><td colspan="4" class="mut">No sources yet.</td></tr>{% endfor %}</table></div>
+{% endfor %}
+{% endblock %}

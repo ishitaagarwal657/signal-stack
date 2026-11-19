@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block body %}
+<h1>Settings</h1>
+<form class="card" method="post"><div class="grid">
+<div><label>Company name</label><input name="name" value="{{c.name}}"></div><div><label>Website</label><input name="url" value="{{c.url}}"></div>
+<div><label>Brief day</label><select name="brief_day">{% for d in ['mon','tue','wed','thu','fri','sat','sun'] %}<option {{'selected' if s.brief_day==d}}>{{d}}</option>{% endfor %}</select></div>
+<div><label>Brief time (HH:MM)</label><input name="brief_time" value="{{s.brief_time}}"></div>
+<div><label>Time zone</label><input name="timezone" value="{{s.timezone}}"></div>
+<div><label>Monitoring frequency (hours, 0 = off)</label><input type="number" name="monitor_hours" value="{{s.monitor_hours}}"></div>
+<div><label>Source audit day of month</label><input type="number" name="audit_day" min="1" max="28" value="{{s.audit_day}}"></div>
+<div><label>Brief lookback (days)</label><input type="number" name="lookback_days" value="{{s.lookback_days}}"></div>
+<div><label>Max items analysed per run</label><input type="number" name="max_analyze" value="{{s.max_analyze}}"></div></div>
+<p><button>Save</button></p></form>
+<form class="card" method="post" action="/c/{{c.id}}/delete" onsubmit="return confirm('Delete this company and all its data?')"><h2>Danger zone</h2><p class="mut">Deletes this company, its sources, records and briefs.</p><button class="bad">Delete company</button></form>
+{% endblock %}

@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% block body %}
+<h1>Internal Intelligence</h1>
+<div class="card"><h2>Upload a file</h2><p class="mut">CRM export, feedback, call or meeting transcript, support log, report. CSV, Excel, PDF or text. The AI extracts objections, lost-deal reasons, product requests and patterns that really appear in the file.</p>
+<form method="post" enctype="multipart/form-data" onsubmit="this.querySelector('button').textContent='Analysing...';"><input type="file" name="file" required><p><button>Upload &amp; analyse</button></p></form></div>
+{% for r in recs %}{% set an=r.analysis|fromjson %}<div class="card"><span class="score">{{r.score}}</span> <b>{{r.title}}</b>
+<p><b>Evidence:</b> {{r.snippet}}</p><p><b>Interpretation:</b> {{an.why_it_matters}}</p><p class="mut">From {{r.url}} &middot; {{r.discovered|d}}</p></div>
+{% else %}<div class="card mut">No internal findings yet.</div>{% endfor %}
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}{% block body %}
+<h1>{{c.name}} <span class="mut">{{c.url}}</span></h1>
+<div class="card"><h2>Initial research</h2>
+{% if r %}<p>{{r.summary}}</p>
+<div class="grid"><div><h3>Verified facts (seen on the website)</h3><ul>
+{% for f in r.verified_facts or [] %}<li>{{f.fact}} <a class="mut" href="{{f.source_url}}" target="_blank">source</a></li>{% else %}<li class="mut">None captured.</li>{% endfor %}</ul></div>
+<div><h3>Assumptions (NOT verified)</h3><ul>{% for a in r.assumptions or [] %}<li>{{a}}</li>{% endfor %}</ul></div></div>
+<p class="mut">Pages fetched: {{(r.pages_fetched or [])|length}}. {{r.fetch_notes|join('; ')}}</p>
+{% else %}<p class="mut">No research stored (it may have failed - check your GEMINI_API_KEY).</p>{% endif %}
+<form method="post" action="/c/{{c.id}}/research"><button class="sec sm">Re-run research</button></form></div>
+
+<div class="card"><h2>Company intelligence profile <span class="mut">(editable)</span></h2>
+{% if p %}
+<form method="post" action="/c/{{c.id}}/profile">
+{% for k,v in p.items() %}<label>{{k.replace('_',' ')|title}}</label><textarea name="{{k}}">{{v}}</textarea>{% endfor %}
+<p><button>Save profile</button></p></form>
+{% else %}<p class="mut">Built automatically from the interview. <a href="/c/{{c.id}}/interview">Start the interview</a> or:</p>
+<form method="post" action="/c/{{c.id}}/profile/build"><button class="sec">Build profile from answers so far</button></form>{% endif %}</div>
+
+{% if qa %}<div class="card"><h2>Edit interview answers</h2>
+<form method="post" action="/c/{{c.id}}/interview/edit">
+{% for q in qa %}<label>Q{{q.seq}}{% if q.kind=='followup' %} (follow-up){% endif %}: {{q.question}}</label>
+<textarea name="a_{{q.id}}" placeholder="{{'skipped' if q.skipped else ''}}">{{q.answer or ''}}</textarea>{% endfor %}
+<p><button>Save answers &amp; rebuild profile</button></p></form></div>{% endif %}
+
+<div class="card" id="changes"><h2>Business context changed?</h2>
+<p class="mut">Describe what changed (new market, new product, pivot...). The system re-scores every source, deactivates ones that no longer fit, discovers new ones and explains what changed.</p>
+<form method="post" action="/c/{{c.id}}/context" onsubmit="this.querySelector('button').textContent='Reassessing...';">
+<textarea name="note" placeholder="e.g. We are pivoting from counselling students in India to selling our platform directly to universities in the UAE."></textarea>
+<p><button>Reassess Signal Stack</button></p></form>
+{% for ch in changes %}<div class="card" style="background:#fafbff"><span class="mut">{{ch.created}}</span><pre style="white-space:pre-wrap;font:inherit;margin:4px 0">{{ch.summary}}</pre></div>{% endfor %}</div>
+{% endblock %}

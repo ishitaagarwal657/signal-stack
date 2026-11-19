@@ -1,0 +1,11 @@
+{% extends "base.html" %}{% block body %}
+<h1>Runs &amp; Health</h1>
+<div class="card"><h2>Scheduled jobs</h2>
+{% for id,nxt in jobs %}<p><span class="tag">{{id.split('_')[0]}}</span> next run: {{nxt}}</p>{% else %}<p class="mut">No jobs.</p>{% endfor %}
+<p class="mut">Weekly brief and monthly audit are independent APScheduler jobs; times come from Settings.</p></div>
+<div class="card"><h2>Run history <a class="mut" href="">(refresh)</a></h2><table><tr><th>#</th><th>Kind</th><th>Trigger</th><th>Started (UTC)</th><th>Status</th><th>Log / error</th></tr>
+{% for r in runs %}<tr><td>{{r.id}}</td><td>{{r.kind}}</td><td>{{r.trigger}}</td><td>{{r.started}}</td>
+<td><span class="tag {{'ok' if r.status=='ok' else ('bad' if r.status=='failed' else 'warn')}}">{{r.status}}</span></td>
+<td>{% if r.error %}<b style="color:var(--bad)">{{r.error}}</b><br>{% endif %}<details><summary class="mut">log</summary><pre style="white-space:pre-wrap;font-size:12px">{{r.log}}</pre></details></td></tr>
+{% else %}<tr><td colspan="6" class="mut">No runs yet.</td></tr>{% endfor %}</table></div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}{% block body %}
+<h1>Founder interview <span class="mut">{{n_main}}/10 main questions</span></h1>
+<div class="card" style="padding:0"><div style="height:8px;background:var(--acc);width:{{[n_main*10,100]|min}}%;border-radius:10px"></div></div>
+{% if filling %}<div class="card">Drafting assumed answers in the background... refresh in a minute.</div>
+{% elif cur %}
+<div class="card"><span class="tag">{{cur.area}}</span>{% if cur.kind=='followup' %}<span class="tag warn">follow-up</span>{% endif %}
+<h2 style="margin-top:8px">{{cur.question}}</h2>
+<form method="post"><input type="hidden" name="qid" value="{{cur.id}}">
+<textarea name="answer" autofocus placeholder="Your answer..."></textarea>
+<p class="row"><button>Submit answer</button><button class="sec" name="skip" value="1" formnovalidate>Skip (confidential)</button></p></form></div>
+{% elif done %}
+<div class="card"><h2>Interview complete</h2>
+<form method="post" action="/c/{{c.id}}/profile/build" class="row"><button>Build / refresh company profile</button><a class="btn sec" href="/c/{{c.id}}/stack">Go to Signal Stack</a></form></div>
+{% endif %}
+<div class="card"><h2>Answers so far</h2>
+{% for q in qa if q.answer or q.skipped %}<p><b>Q{{q.seq}}.</b> {{q.question}}<br><span class="mut">{{'(skipped)' if q.skipped else q.answer}}</span>{% if q.assumed %} <span class="tag warn">AI-assumed</span>{% endif %}</p>
+{% else %}<p class="mut">Nothing yet.</p>{% endfor %}</div>
+<div class="card"><h3>Testing another company quickly?</h3>
+<p class="mut">For stress-test companies only: let the AI draft assumed answers from public info (clearly flagged as AI-assumed). Your real MeetUniversity interview should be answered by you.</p>
+<form method="post" action="/c/{{c.id}}/interview/autofill"><button class="sec sm">Auto-draft assumed answers</button></form></div>
+{% endblock %}

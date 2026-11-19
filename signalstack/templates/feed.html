@@ -1,0 +1,26 @@
+{% extends "base.html" %}{% block body %}
+<h1>Intelligence Feed</h1>
+<form class="card" method="get"><div class="grid">
+<div><label>Category</label><select name="category"><option value="">All</option>{% for x in ['customers','competitors','market','internal'] %}<option {{'selected' if a.category==x}}>{{x}}</option>{% endfor %}</select></div>
+<div><label>Competitor</label><select name="competitor"><option value="">All</option>{% for x in comps %}<option {{'selected' if a.competitor==x}}>{{x}}</option>{% endfor %}</select></div>
+<div><label>Since (date)</label><input type="date" name="since" value="{{a.since or ''}}"></div>
+<div><label>Min relevance</label><input type="number" name="min_rel" min="0" max="10" value="{{a.min_rel or ''}}"></div>
+<div><label>Min impact</label><input type="number" name="min_impact" min="0" max="10" value="{{a.min_impact or ''}}"></div>
+<div><label>Verification</label><select name="verified"><option value="">All</option>{% for x in ['verified','partially verified','unverified'] %}<option {{'selected' if a.verified==x}}>{{x}}</option>{% endfor %}</select></div>
+<div><label>Type</label><select name="type"><option value="">All</option>{% for x in ['opportunity','threat','neutral'] %}<option {{'selected' if a.type==x}}>{{x}}</option>{% endfor %}</select></div>
+<div><label>Sort</label><select name="sort"><option value="">Newest first</option><option value="score" {{'selected' if a.sort=='score'}}>Importance score</option></select></div></div>
+<p class="row"><button>Filter</button><a class="btn sec" href="/c/{{c.id}}/feed">Reset</a><span class="mut">{{rows|length}} records</span></p></form>
+{% for r in rows %}{% set an=r.analysis|fromjson %}
+<div class="card"><div class="row"><span class="score">{{r.score if r.score is not none else '-'}}</span>
+<span class="tag">{{r.category}}</span>{% if r.competitor %}<span class="tag">{{r.competitor}}</span>{% endif %}
+{% if an.type %}<span class="tag {{'ok' if an.type=='opportunity' else ('bad' if an.type=='threat' else '')}}">{{an.type}}</span>{% endif %}
+<span class="tag {{'ok' if r.verified and r.verified.startswith('verified') else 'warn'}}">{{r.verified or 'not analysed yet'}}</span>
+<span class="mut">published {{r.published|d or 'n/a'}} &middot; discovered {{r.discovered|d}}</span></div>
+<h3><a href="{{r.url}}" target="_blank">{{r.title}}</a> <span class="mut">{{r.publisher}}</span></h3>
+{% if an %}<p><b>Evidence:</b> {{an.what_happened}}</p>
+<p><b>Interpretation:</b> {{(an.why_it_matters or '').replace('Interpretation:','').strip()}}</p>
+{% if an.suggested_action %}<p><b>Consider:</b> {{an.suggested_action}}</p>{% endif %}
+<p class="mut">Area: {{an.business_area}} &middot; Why ranked: {{explain(r)}} &middot; evidence strength {{r.evidence_strength|round|int}}/10</p>
+{% else %}<p class="mut">{{r.snippet}}</p>{% endif %}</div>
+{% else %}<div class="card mut">No records. Approve sources and run a crawl.</div>{% endfor %}
+{% endblock %}

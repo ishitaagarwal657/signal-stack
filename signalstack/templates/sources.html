@@ -1,0 +1,25 @@
+{% extends "base.html" %}{% block body %}
+<h1>Source Manager</h1>
+<div class="card row">
+<form method="post" action="/c/{{c.id}}/sources/approve-all"><button class="ok">Approve all pending</button></form>
+<form method="post" action="/c/{{c.id}}/run/crawl"><button class="sec">Crawl approved sources now</button></form>
+<form method="post" action="/c/{{c.id}}/discover"><button class="sec">Discover more</button></form></div>
+<div class="card"><h2>Add a source</h2>
+<form method="post" action="/c/{{c.id}}/sources/add"><div class="grid">
+<div><label>Category</label><select name="category"><option>customers</option><option>competitors</option><option>market</option></select></div>
+<div><label>Type</label><select name="kind"><option value="page">Web page (change detection)</option><option value="rss">RSS feed URL or news search phrase</option><option value="hn">Hacker News search phrase</option></select></div>
+<div><label>Name</label><input name="name"></div><div><label>URL or search phrase</label><input name="url" required></div>
+<div><label>Competitor (optional)</label><input name="competitor"></div><div><label>Reason for monitoring</label><input name="reason"></div></div>
+<p><button>Add &amp; approve</button></p></form></div>
+<div class="card"><h2>Sources</h2><table>
+<tr><th>Name / reason</th><th>Cat</th><th>Health</th><th>History</th><th></th></tr>
+{% for s in srcs %}<tr><td><b>{{s.name}}</b>{% if s.id in dups %} <span class="tag warn">duplicate</span>{% endif %}{% if s.origin=='manual' %} <span class="tag">manual</span>{% endif %}<br><span class="mut">{{s.reason}}</span></td>
+<td>{{s.category}}<br><span class="mut">{{s.kind}}</span></td>
+<td><span class="tag {{'ok' if s.status=='approved' else ('warn' if s.status in ('pending','inactive') else 'bad')}}">{{s.status}}</span><br>
+<span class="mut">HTTP {{s.last_http or '-'}}{% if s.fail_count %} &middot; {{s.fail_count}} fails{% endif %}<br>checked {{s.last_checked|d or 'never'}}</span></td>
+<td class="mut">{{s.n_records}} records<br>{{s.n_recent}} in 45d{% if s.avg_rel is not none %}<br>avg rel {{s.avg_rel}}{% endif %}</td>
+<td>{% if s.status in ('pending','inactive') %}<form method="post" action="/c/{{c.id}}/sources/{{s.id}}/approve"><button class="sm ok">Approve</button></form>{% endif %}
+{% if s.status!='removed' %}<form method="post" action="/c/{{c.id}}/sources/{{s.id}}/remove"><button class="sm bad">Remove</button></form>
+{% else %}<form method="post" action="/c/{{c.id}}/sources/{{s.id}}/restore"><button class="sm sec">Restore</button></form>{% endif %}</td></tr>
+{% endfor %}</table></div>
+{% endblock %}

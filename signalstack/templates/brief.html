@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block body %}
+<div class="card row"><a class="btn sec" href="/c/{{c.id}}/briefs">&larr; History</a>
+<a class="btn" href="/c/{{c.id}}/brief/{{b.id}}/download/html">Download email-ready HTML</a>
+<a class="btn sec" href="/c/{{c.id}}/brief/{{b.id}}/download/md">Download Markdown</a><button class="sec" onclick="window.print()">Print / PDF</button></div>
+{% if actions %}<div class="card"><h2>Action tracking</h2><table><tr><th></th><th>Action</th><th>Owner</th><th>Priority</th></tr>
+{% for a in actions %}<tr><td><form method="post" action="/c/{{c.id}}/action/{{a.id}}/toggle"><button class="sm {{'ok' if a.done else 'sec'}}">{{'Done' if a.done else 'Open'}}</button></form></td>
+<td style="{{'text-decoration:line-through' if a.done}}">{{a.text}}<br><span class="mut">{{a.reason}}</span></td><td>{{a.owner}}</td><td>{{a.priority}}</td></tr>{% endfor %}</table></div>{% endif %}
+<div class="card brief">{{body|safe}}</div>
+<style>.brief table{font-size:12px}.brief td,.brief th{border:1px solid var(--line)}</style>
+{% endblock %}

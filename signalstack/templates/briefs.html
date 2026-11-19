@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block body %}
+<h1>Monday Brief</h1>
+<div class="card row"><form method="post" action="/c/{{c.id}}/run/weekly"><button>Generate brief now (crawl + analyse + brief)</button></form>
+<form method="post" action="/c/{{c.id}}/run/audit"><button class="sec">Run monthly source audit</button></form>
+<span class="mut">Runs in the background. Check Runs &amp; Health for progress.</span></div>
+<div class="card"><h2>History</h2><table><tr><th>#</th><th>Type</th><th>Created (UTC)</th><th></th></tr>
+{% for b in rows %}<tr><td>{{b.id}}</td><td>{{'Monday brief' if b.kind=='weekly' else 'Source audit'}}</td><td>{{b.created}}</td><td><a href="/c/{{c.id}}/brief/{{b.id}}">Open</a></td></tr>
+{% else %}<tr><td colspan="4" class="mut">No briefs yet.</td></tr>{% endfor %}</table></div>
+{% endblock %}
